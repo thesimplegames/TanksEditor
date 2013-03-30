@@ -1,17 +1,19 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class EditorController : MonoBehaviour {
 	
 	private bool editorMode = false;	//	true - we edit, false - settings on start
-	private int mapWidth = 10;
-	private int mapHeight = 10;
+	private int mapWidth = 15;
+	private int mapHeight = 15;
 	private int min = 10;
 	private int max = 30;
 	private BrushStyle[,] map;
 	private enum BrushStyle {None, SuperWall = 1, Wall, Tank1, Tank2, EnemyTank, Grass, Water, Arol};
 	private BrushStyle brush = BrushStyle.None;
 	private GameObject elementPrefab;
+	private List<GameObject> elements = new List<GameObject>();
 	
 	
 	// Use this for initialization
@@ -34,14 +36,20 @@ public class EditorController : MonoBehaviour {
 		Debug.Log(strMap);
 		return(strMap);
 	}
-	
-	void LoadFromFile(string path) {
-		string strMap = System.IO.File.ReadAllLines(path, System.Text.Encoding.UTF8)[0];
+	/*
+	BrushStyle[,] LoadFromFile(string path) {
+		string strMap;
+		System.IO.StreamReader file = new System.IO.StreamReader(path);
+	    strMap = file.ReadLine();
+		file.Close();	
+		//int[,] map;
+		
 		int mWidth = 0;
 		int mHeight = 0;
 		bool wh = true;
 		string sInt = "";
 		int mapPosition = 0;
+		
 		//	Loading map size
 		for (int i = 0; i < strMap.Length; i++) {
 			if (strMap[i] == ':') {
@@ -60,19 +68,61 @@ public class EditorController : MonoBehaviour {
 		}
 		
 		map = new BrushStyle[mWidth, mHeight];
-		
 		for (int i = 0; i < mapWidth; i++) {
 			for (int j = 0; j < mapWidth; j++) {
-				map[i, j] = (BrushStyle)System.Convert.ToInt32(strMap[mapPosition]);
+				map[i, j] = (BrushStyle)System.Convert.ToInt32(strMap[mapPosition].ToString());
 				mapPosition++;
 			}
-		}		
+		}	
+		return map;
+	}	
+	*/
+	
+	int[,] LoadFromFile(string path) {
+		string strMap;
+		System.IO.StreamReader file = new System.IO.StreamReader(path);
+	    strMap = file.ReadLine();
+		file.Close();	
+		int[,] map;
+		
+		int mWidth = 0;
+		int mHeight = 0;
+		bool wh = true;
+		string sInt = "";
+		int mapPosition = 0;
+		
+		//	Loading map size
+		for (int i = 0; i < strMap.Length; i++) {
+			if (strMap[i] == ':') {
+				if (wh) {
+					wh = false;
+					mWidth = System.Convert.ToInt32(sInt);
+					sInt = "";
+				} else {
+					mHeight = System.Convert.ToInt32(sInt);
+					mapPosition = i + 1;
+					break;
+				}
+			} else {
+				sInt += strMap[i];
+			}			
+		}
+		
+		map = new int[mWidth, mHeight];
+		for (int i = 0; i < mapWidth; i++) {
+			for (int j = 0; j < mapWidth; j++) {
+				map[i, j] = System.Convert.ToInt32(strMap[mapPosition].ToString());
+				mapPosition++;
+			}
+		}	
+		return map;
 	}
 
 	void SaveToFile(string path) {
-		string[] strMap = new string[] {MapToString()};
-		System.IO.File.Create(path);
-		System.IO.File.WriteAllLines(path, strMap, System.Text.Encoding.UTF8);
+		string strMap = MapToString();
+		System.IO.StreamWriter file = new System.IO.StreamWriter(path);
+		file.WriteLine(strMap);
+		file.Close();
 	}	
 	
 	// Update is called once per frame
@@ -99,8 +149,15 @@ public class EditorController : MonoBehaviour {
 		}
 	}
 	
+	void DestroyElements () {
+		for (int i = 0; i < elements.Count; i++) {
+			Destroy(elements[i]);
+		}
+	}
+	
 	void StartEdit () {
 		Camera.mainCamera.transform.position = new Vector3(mapWidth / 2, mapHeight / 2, Camera.mainCamera.transform.position.z);
+		Camera.mainCamera.orthographicSize = 2 + (mapWidth > mapHeight ? (mapWidth / 2 + 1) : (mapHeight / 2 + 1));
 		map = new BrushStyle[mapWidth, mapHeight];
 		for (int i = 0; i < mapWidth; i++) {
 			for (int j = 0; j < mapHeight; j++) {
@@ -117,6 +174,7 @@ public class EditorController : MonoBehaviour {
 				
 				newElement.transform.position = new Vector3(i, j, 0);
 				newElement.name = "Element_x" + i.ToString() + "y" + j.ToString();
+				elements.Add(newElement);
 			}
 		}
 	}
@@ -147,10 +205,16 @@ public class EditorController : MonoBehaviour {
 			}
 			
 		} else {
-			if (GUI.Button(new Rect(0, 0, 100, 50), "New map")) 
+			if (GUI.Button(new Rect(0, 0, 100, 50), "New map")) {
+				DestroyElements();
 				editorMode = false;
+			}
 			if (GUI.Button(new Rect(0, 100, 100, 50), "Save map")) {
-				SaveToFile("map" + ((int)(Time.time)).ToString());
+				SaveToFile("map" + ((int)(Time.time)).ToString() + ".txt");
+			}     
+			
+			if (GUI.Button(new Rect(0, 200, 100, 50), "Load map")) {
+				LoadFromFile("map1.txt");
 			}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 			
 			if (GUI.Button(new Rect(150, 0, 60, 50), "None")) 
