@@ -7,8 +7,8 @@ public class EditorController : MonoBehaviour {
 	private bool editorMode = false;	//	true - we edit, false - settings on start
 	private int mapWidth = 15;
 	private int mapHeight = 15;
-	private int min = 10;
-	private int max = 30;
+	private int minSize = 10;
+	private int maxSize = 30;
 	private BrushStyle[,] map;
 	private enum BrushStyle {None, SuperWall = 1, Wall, Tank1, Tank2, EnemyTank, Grass, Water, Arol};
 	private BrushStyle brush = BrushStyle.None;
@@ -185,18 +185,18 @@ public class EditorController : MonoBehaviour {
 
 			GUI.Button(new Rect(Screen.width / 2 - 100, 160, 100, 50), "Width: " + mapWidth.ToString());
 			if (GUI.Button(new Rect(Screen.width / 2,160, 50, 50), "-")) 
-				if (mapWidth > min) 
+				if (mapWidth > minSize) 
 					mapWidth--;
 			if (GUI.Button(new Rect(Screen.width / 2 + 50, 160, 50, 50), "+")) 
-				if (mapWidth < max) 
+				if (mapWidth < maxSize) 
 					mapWidth++;
 
 			GUI.Button(new Rect(Screen.width / 2 - 100, 220, 100, 50), "Height: " + mapHeight.ToString());
 			if (GUI.Button(new Rect(Screen.width / 2, 220, 50, 50), "-")) 
-				if (mapHeight > min) 
+				if (mapHeight > minSize) 
 					mapHeight--;
 			if (GUI.Button(new Rect(Screen.width / 2 + 50, 220, 50, 50), "+")) 
-				if (mapHeight < max) 
+				if (mapHeight < maxSize) 
 					mapHeight++;
 
 			if (GUI.Button(new Rect(Screen.width / 2 -100, 280, 200, 50), "Start editor")) {
