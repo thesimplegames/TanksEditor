@@ -10,7 +10,7 @@ public class EditorController : MonoBehaviour {
 	private int minSize = 10;
 	private int maxSize = 30;
 	private BrushStyle[,] map;
-	private enum BrushStyle {None, SuperWall = 1, Wall, Tank1, Tank2, EnemyTank, Grass, Water, Arol};
+	private enum BrushStyle {None = 0, Wall = 1, Water = 2, Grass = 3, Arol = 4, Enemy = 5, Tank1 = 6, Tank2 = 7, SuperWall = 8};
 	private BrushStyle brush = BrushStyle.None;
 	private GameObject elementPrefab;
 	private List<GameObject> elements = new List<GameObject>();
@@ -27,12 +27,21 @@ public class EditorController : MonoBehaviour {
 	
 	string MapToString () {
 		string strMap = mapWidth.ToString() + ":" + mapHeight.ToString() + ":";
-		
-		for (int i = 0; i < mapWidth; i++) {
-			for (int j = 0; j < mapWidth; j++) {
+		/*
+		for (int i = 0; i <= mapWidth; i--) {
+			for (int j = 0; j < mapHeight; j++) {
 				strMap += ((int)map[i, j]).ToString();
 			}
+		}*/
+		
+		
+		
+		for (int i = 0; i < mapWidth; i++) {
+			for (int j = 0; j < mapHeight; j++) {
+				strMap += ((int)map[i, mapHeight - j - 1]).ToString();
+			}
 		}
+		
 		Debug.Log(strMap);
 		return(strMap);
 	}
@@ -134,7 +143,7 @@ public class EditorController : MonoBehaviour {
 			if (Input.GetMouseButton(0)) {
 				if (Physics.Raycast(ray, out hit) && !MouseOnFrame((int)hit.transform.position.x, mapHeight - (int)hit.transform.position.y - 1)) {
 					Debug.Log(hit.transform.position);
-					hit.transform.renderer.material.mainTexture = Resources.Load("Png/" + ((int)brush).ToString()) as Texture;
+					hit.transform.renderer.material.mainTexture = Resources.Load("Png/" + brush.ToString()) as Texture;
 					map[(int)hit.transform.position.x, mapHeight - (int)hit.transform.position.y - 1] = brush;
 				}
 			}
@@ -142,7 +151,7 @@ public class EditorController : MonoBehaviour {
 			if (Input.GetMouseButton(1)) {
 				if (Physics.Raycast(ray, out hit) && !MouseOnFrame((int)hit.transform.position.x, mapHeight - (int)hit.transform.position.y - 1)) {
 					Debug.Log(hit.transform.position);
-					hit.transform.renderer.material.mainTexture = Resources.Load("Png/0") as Texture;
+					hit.transform.renderer.material.mainTexture = Resources.Load("Png/None") as Texture;
 					map[(int)hit.transform.position.x, mapHeight - (int)hit.transform.position.y - 1] = BrushStyle.None;
 				}
 			}			
@@ -166,10 +175,10 @@ public class EditorController : MonoBehaviour {
 				
 				if (i == 0 || j == 0 || i == mapWidth - 1 || j == mapHeight - 1) {
 					map[i, j] = BrushStyle.SuperWall;
-					newElement.renderer.material.mainTexture = Resources.Load("Png/1") as Texture;
+					newElement.renderer.material.mainTexture = Resources.Load("Png/SuperWall") as Texture;
 				} else {
 					map[i, j] = BrushStyle.None;
-					newElement.renderer.material.mainTexture = Resources.Load("Png/0") as Texture;
+					newElement.renderer.material.mainTexture = Resources.Load("Png/None") as Texture;
 				}
 				
 				newElement.transform.position = new Vector3(i, j, 0);
@@ -210,13 +219,13 @@ public class EditorController : MonoBehaviour {
 				editorMode = false;
 			}
 			if (GUI.Button(new Rect(0, 100, 100, 50), "Save map")) {
-				SaveToFile("map" + ((int)(Time.time)).ToString() + ".txt");
+				SaveToFile("map_" + ((int)(Time.time)).ToString() + ".txt");
 			}     
 			
 			if (GUI.Button(new Rect(0, 200, 100, 50), "Load map")) {
 				LoadFromFile("map1.txt");
 			}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
-			
+//{None = 0, Wall = 1, Water = 2, Grass = 3, Arol = 4, Enemy = 5, Tank1 = 6, Tank2 = 7, SuperWall = 8};			
 			if (GUI.Button(new Rect(150, 0, 60, 50), "None")) 
 				brush = BrushStyle.None;
 			if (GUI.Button(new Rect(210, 0, 60, 50), "Wall")) 
@@ -226,7 +235,7 @@ public class EditorController : MonoBehaviour {
 			if (GUI.Button(new Rect(330, 0, 60, 50), "Tank2")) 
 				brush = BrushStyle.Tank2;
 			if (GUI.Button(new Rect(390, 0, 60, 50), "Enemy")) 
-				brush = BrushStyle.EnemyTank;
+				brush = BrushStyle.Enemy;
 			if (GUI.Button(new Rect(450, 0, 60, 50), "Grass")) 
 				brush = BrushStyle.Grass;
 			if (GUI.Button(new Rect(510, 0, 60, 50), "Water")) 
