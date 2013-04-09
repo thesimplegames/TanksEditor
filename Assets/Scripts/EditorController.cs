@@ -9,6 +9,7 @@ public class EditorController : MonoBehaviour {
 	private int mapHeight = 15;
 	private int minSize = 10;
 	private int maxSize = 30;
+	private int numberEnemies=0;
 	private BrushStyle[,] map;
 	private enum BrushStyle {None = 0, Wall = 1, Water = 2, Grass = 3, Arol = 4, Enemy = 5, Tank1 = 6, Tank2 = 7, SuperWall = 8};
 	private BrushStyle brush = BrushStyle.None;
@@ -26,7 +27,7 @@ public class EditorController : MonoBehaviour {
 	}
 	
 	string MapToString () {
-		string strMap = mapWidth.ToString() + ":" + mapHeight.ToString() + ":";
+		string strMap = numberEnemies.ToString()+ ":" + mapWidth.ToString() + ":" + mapHeight.ToString() + ":";
 		/*
 		for (int i = 0; i <= mapWidth; i--) {
 			for (int j = 0; j < mapHeight; j++) {
@@ -96,15 +97,21 @@ public class EditorController : MonoBehaviour {
 		
 		int mWidth = 0;
 		int mHeight = 0;
-		bool wh = true;
+		int wh = 0;
 		string sInt = "";
 		int mapPosition = 0;
 		
 		//	Loading map size
 		for (int i = 0; i < strMap.Length; i++) {
 			if (strMap[i] == ':') {
-				if (wh) {
-					wh = false;
+				if (wh==0) {
+					wh = 1;
+					numberEnemies = System.Convert.ToInt32(sInt);
+					sInt = "";
+					continue;
+				}
+				if (wh==1) {
+					wh = 2;
 					mWidth = System.Convert.ToInt32(sInt);
 					sInt = "";
 				} else {
@@ -219,11 +226,11 @@ public class EditorController : MonoBehaviour {
 				editorMode = false;
 			}
 			if (GUI.Button(new Rect(0, 100, 100, 50), "Save map")) {
-				SaveToFile("map_" + ((int)(Time.time)).ToString() + ".txt");
+				SaveToFile("map_" + ((int)(Time.time)).ToString() + ".map");
 			}     
 			
 			if (GUI.Button(new Rect(0, 200, 100, 50), "Load map")) {
-				LoadFromFile("map1.txt");
+				LoadFromFile("1.map");
 			}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 //{None = 0, Wall = 1, Water = 2, Grass = 3, Arol = 4, Enemy = 5, Tank1 = 6, Tank2 = 7, SuperWall = 8};			
 			if (GUI.Button(new Rect(150, 0, 60, 50), "None")) 
@@ -244,6 +251,14 @@ public class EditorController : MonoBehaviour {
 				brush = BrushStyle.Arol;			
 			if (GUI.Button(new Rect(630, 0, 60, 50), "Rock")) 
 				brush = BrushStyle.SuperWall;
+			
+			GUI.Button(new Rect(720, 0, 220, 50), "Number of enemies: "+numberEnemies.ToString()); 
+			if (GUI.Button(new Rect(940, 0, 50, 50), "-")) {
+				if (numberEnemies>0) numberEnemies--;
+			}
+			if (GUI.Button(new Rect(990, 0, 50, 50), "+")) {
+				if (numberEnemies<1828) numberEnemies++;
+			}
 		}
 	}
 }
