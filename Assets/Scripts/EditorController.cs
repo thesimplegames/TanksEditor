@@ -5,13 +5,13 @@ using System.Collections.Generic;
 public class EditorController : MonoBehaviour {
 	
 	private bool editorMode = false;	//	true - we edit, false - settings on start
-	private int mapWidth = 15;
-	private int mapHeight = 15;
+	public static int mapWidth = 15;
+	public static int mapHeight = 15;
 	private int minSize = 10;
 	private int maxSize = 30;
 	private int numberEnemies=0;
 	private BrushStyle[,] map;
-	private enum BrushStyle {None = 0, Wall = 1, Water = 2, Grass = 3, Arol = 4, Enemy = 5, Tank1 = 6, Tank2 = 7, SuperWall = 8};
+	public enum BrushStyle {None = 0, Wall = 1, Water = 2, Grass = 3, Arol = 4, Enemy = 5, Tank1 = 6, Tank2 = 7, SuperWall = 8};
 	private BrushStyle brush = BrushStyle.None;
 	private GameObject elementPrefab;
 	private List<GameObject> elements = new List<GameObject>();
