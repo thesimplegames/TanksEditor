@@ -1,8 +1,9 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\EditorController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\MazeEditor.cs">
     <Files>
-      <File FileName="Assets\Scripts\EditorController.cs" Line="100" Column="13" />
+      <File FileName="Assets\Scripts\MazeEditor.cs" Line="98" Column="76" />
+      <File FileName="Assets\Scripts\EditorController.cs" Line="137" Column="15" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
