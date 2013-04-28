@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+
 public class EditorController : MonoBehaviour {
 	
 	private bool editorMode = false;	//	true - we edit, false - settings on start
@@ -149,7 +150,6 @@ public class EditorController : MonoBehaviour {
 			
 			if (Input.GetMouseButton(0)) {
 				if (Physics.Raycast(ray, out hit) && !MouseOnFrame((int)hit.transform.position.x, mapHeight - (int)hit.transform.position.y - 1)) {
-					Debug.Log(hit.transform.position);
 					hit.transform.renderer.material.mainTexture = Resources.Load("Png/" + brush.ToString()) as Texture;
 					map[(int)hit.transform.position.x, mapHeight - (int)hit.transform.position.y - 1] = brush;
 				}
@@ -157,7 +157,6 @@ public class EditorController : MonoBehaviour {
 			
 			if (Input.GetMouseButton(1)) {
 				if (Physics.Raycast(ray, out hit) && !MouseOnFrame((int)hit.transform.position.x, mapHeight - (int)hit.transform.position.y - 1)) {
-					Debug.Log(hit.transform.position);
 					hit.transform.renderer.material.mainTexture = Resources.Load("Png/None") as Texture;
 					map[(int)hit.transform.position.x, mapHeight - (int)hit.transform.position.y - 1] = BrushStyle.None;
 				}
@@ -195,10 +194,18 @@ public class EditorController : MonoBehaviour {
 		}
 	}
 	
+	void DoMyWindow(int windowID) {
+        if (GUI.Button(new Rect(10, 20, 100, 20), "Hello World"))
+            print("Got a click");
+        
+    }
+	
 	void OnGUI () {
 		if (!editorMode) {
-			GUI.Button(new Rect(Screen.width / 2 - 100, 100, 200, 50), "Set map settings");
-
+			GUI.Box(new Rect(Screen.width / 2 - 100, 100, 200, 50), "Set map settings");
+			
+			GUI.Window(1,new Rect (100,100,200,200),DoMyWindow ,"Lol");
+			
 			GUI.Button(new Rect(Screen.width / 2 - 100, 160, 100, 50), "Width: " + mapWidth.ToString());
 			if (GUI.Button(new Rect(Screen.width / 2,160, 50, 50), "-")) 
 				if (mapWidth > minSize) 
@@ -227,14 +234,23 @@ public class EditorController : MonoBehaviour {
 			}
 			if (GUI.Button(new Rect(0, 100, 100, 50), "Save map")) {
 				SaveToFile("map_" + ((int)(Time.time)).ToString() + ".map");
+			
 			}     
 			
 			if (GUI.Button(new Rect(0, 200, 100, 50), "Load map")) {
 				LoadFromFile("1.map");
 			}                  
 			if (GUI.Button(new Rect(0, 300, 100, 50), "Randomize")) {
-				map = MazeEditor.Randomize();
-				MapToString();
+				BrushStyle [,] maze = new BrushStyle [mapWidth-2,mapHeight-2];
+				maze = MazeEditor.Randomize();
+				for (int i = 1; i<mapWidth-1;i++)
+				for (int j = 1; j<mapHeight-1;j++){
+					if (map[i,j] == BrushStyle.None) {
+						map[i,j]=maze[i-1,j-1];
+						if (map[i,j]!=BrushStyle.None)
+						GameObject.Find("Element_x"+i+"y"+(j)).renderer.material.mainTexture = Resources.Load("Png/Wall") as Texture;
+					}
+				}
 			}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
 //{None = 0, Wall = 1, Water = 2, Grass = 3, Arol = 4, Enemy = 5, Tank1 = 6, Tank2 = 7, SuperWall = 8};			
 			if (GUI.Button(new Rect(150, 0, 60, 50), "None")) 
